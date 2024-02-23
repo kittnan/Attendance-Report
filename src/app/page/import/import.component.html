@@ -1,0 +1,15 @@
+<div fxLayout="row wrap" fxLayoutAlign="center center">
+  <app-title fxFlex="100" [title]="'Import Data'"></app-title>
+  <div fxFlex="95" fxLayout="row wrap" fxLayoutAlign="center center" class="mt-8">
+    <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>File upload</mat-label>
+        <input matInput >
+        <button mat-icon-button matSuffix (click)="file.click()">
+          <mat-icon>attach_file</mat-icon>
+        </button>
+      </mat-form-field>
+      <input hidden type="file" #file (change)="onUpload($event)" >
+    </div>
+  </div>
+</div>

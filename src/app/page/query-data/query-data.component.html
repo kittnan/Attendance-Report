@@ -1,0 +1,267 @@
+<div fxLayout="row wrap" fxLayoutAlign="center center">
+  <app-title fxFlex="100" [title]="'Query Data'"></app-title>
+  <div fxFlex="95" fxLayout="row wrap" fxLayoutAlign="center center" class="mt-8">
+    <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="50">
+      <!-- <app-autocomplete [title]="'Department Code'" [myControl]="departmentCtrl" [options]="departmentOption"
+        (valueChange)="valueChange($event)"></app-autocomplete> -->
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Filter Option</mat-label>
+        <mat-select [(ngModel)]="filterSelected" (ngModelChange)="onChangeFilter()">
+          <mat-option *ngFor="let item of filterOption" [value]="item">{{item}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="filterSelected=='department code' " appearance="outline" floatLabel="always">
+        <mat-label>Department Code</mat-label>
+        <mat-select [formControl]="departmentCtrl" multiple>
+          <mat-option *ngFor="let item of departmentOption" [value]="item">{{item}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="filterSelected=='employee code' " appearance="outline" floatLabel="always">
+        <mat-label>Employee Code</mat-label>
+        <input matInput [(ngModel)]="employeeCodeSelected">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Date Period</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate placeholder="Start date" [(ngModel)]="start">
+          <input matEndDate placeholder="End date" [(ngModel)]="end">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+
+      <mat-radio-group fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10">
+        <mat-radio-button value="summary" [checked]="true" (change)="onSelectMode2($event)">Summary</mat-radio-button>
+        <mat-radio-button value="detail" (change)="onSelectMode2($event)">Detail</mat-radio-button>
+      </mat-radio-group>
+
+
+      <button mat-raised-button class="bg-green-300" (click)="onSubmit()">
+        <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="5">
+          <span>Submit</span>
+          <mat-icon class="mat-18">
+            travel_explore
+          </mat-icon>
+        </div>
+      </button>
+
+    </div>
+    <div fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="10">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>Users Select</mat-label>
+        <mat-select [(ngModel)]="userSelect" (ngModelChange)="onChangeUserSelect()">
+          <mat-option [value]="'all'">All</mat-option>
+          <mat-option *ngFor="let user of userOption" [value]="user.employeeCode">{{user.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+    <div *ngIf="dataSource &&  mode =='summary' && displayedColumns.length>0" [@fadeInOnEnter] fxFlex="100"
+      fxLayout="row wrap" fxLayoutAlign="start start" class="table-container">
+      <table fxFlex="100" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="department">
+          <th mat-header-cell *matHeaderCellDef>
+            department
+          </th>
+          <td mat-cell *matCellDef="let element; let i = index"
+            [ngClass]="{'bg-emerald-300 font-black': hideValueAfterFirst('department',i)}">
+            <ng-container *ngIf="hideValueAfterFirst('department',i)">
+              {{element.department}}
+            </ng-container>
+          </td>
+          <td mat-footer-cell *matFooterCellDef> Total </td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>
+            Name
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+          <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+        <ng-container matColumnDef="employeeCode">
+          <th mat-header-cell *matHeaderCellDef>
+            employee Code
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.employeeCode}} </td>
+          <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+        <ng-container matColumnDef="totalWh">
+          <th mat-header-cell *matHeaderCellDef>
+            total Wh
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.totalWh)"> {{element.totalWh}} </td>
+          <td mat-footer-cell *matFooterCellDef [class]="cssTime(footerSum('totalWH'))"
+            [class]="cssTime(footerSum('totalWH'))">
+            {{footerSum('totalWH')}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="totalOT">
+          <th mat-header-cell *matHeaderCellDef>
+            total OT
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.totalOT)"> {{element.totalOT}} </td>
+          <td mat-footer-cell *matFooterCellDef [class]="cssTime(footerSum('totalOT'))">
+            {{footerSum('totalOT')}}
+          </td>
+
+        </ng-container>
+        <ng-container matColumnDef="totalOT2">
+          <th mat-header-cell *matHeaderCellDef>
+            total OT2
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.totalOT2)"> {{element.totalOT2}} </td>
+          <td mat-footer-cell *matFooterCellDef [class]="cssTime(footerSum('totalOT2'))">
+            {{footerSum('totalOT2')}}
+          </td>
+
+        </ng-container>
+        <ng-container matColumnDef="totalOT3">
+          <th mat-header-cell *matHeaderCellDef>
+            total OT3
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.totalOT3)"> {{element.totalOT3}} </td>
+          <td mat-footer-cell *matFooterCellDef [class]="cssTime(footerSum('totalOT3'))">
+            {{footerSum('totalOT3')}}
+          </td>
+
+        </ng-container>
+        <ng-container matColumnDef="totalOT4">
+          <th mat-header-cell *matHeaderCellDef>
+            total OT4
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.totalOT4)"> {{element.totalOT4}} </td>
+          <td mat-footer-cell *matFooterCellDef [class]="cssTime(footerSum('totalOT4'))">
+            {{footerSum('totalOT4')}}
+          </td>
+
+        </ng-container>
+        <ng-container matColumnDef="totalOT5">
+          <th mat-header-cell *matHeaderCellDef>
+            total OT5
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.totalOT5)"> {{element.totalOT5}} </td>
+          <td mat-footer-cell *matFooterCellDef [class]="cssTime(footerSum('totalOT5'))">
+            {{footerSum('totalOT5')}}
+          </td>
+
+        </ng-container>
+        <ng-container matColumnDef="totalAll">
+          <th mat-header-cell *matHeaderCellDef>
+            total All
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.totalAll)"> {{element.totalAll}} </td>
+          <td mat-footer-cell *matFooterCellDef [class]="cssTime(footerSum('totalAll'))"
+            style="font-size: 16px !important; text-decoration: underline;">
+            {{footerSum('totalAll')}}
+          </td>
+
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns ;sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+      </table>
+
+
+    </div>
+    <div *ngIf="dataSource &&  mode=='detail' && displayedColumns.length>0" [@fadeInOnEnter] fxFlex="100"
+      fxLayout="row wrap" fxLayoutAlign="start start" class="table-container">
+
+      <table fxFlex="100" mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="department">
+          <th mat-header-cell *matHeaderCellDef>
+            department
+          </th>
+          <td mat-cell *matCellDef="let element; let i = index"
+            [ngClass]="{'bg-emerald-300 font-black': hideValueAfterFirst('department',i)}">
+            <ng-container *ngIf="hideValueAfterFirst('department',i)">
+              {{element.department}}
+            </ng-container>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>
+            Name
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="employeeCode">
+          <th mat-header-cell *matHeaderCellDef>
+            employee Code
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.employeeCode}} </td>
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>
+            date
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.date}} </td>
+        </ng-container>
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>
+            type
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssType(element.type)"> {{element.type}} </td>
+        </ng-container>
+        <ng-container matColumnDef="in">
+          <th mat-header-cell *matHeaderCellDef>
+            in
+          </th>
+          <td mat-cell *matCellDef="let element" class="text-green-500 font-semibold"> {{element.in}} </td>
+        </ng-container>
+        <ng-container matColumnDef="out">
+          <th mat-header-cell *matHeaderCellDef>
+            out
+          </th>
+          <td mat-cell *matCellDef="let element" class="text-red-400 font-semibold"> {{element.out}} </td>
+        </ng-container>
+        <ng-container matColumnDef="wh">
+          <th mat-header-cell *matHeaderCellDef>
+            wh
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.wh)"> {{element.wh}} </td>
+        </ng-container>
+        <ng-container matColumnDef="OT">
+          <th mat-header-cell *matHeaderCellDef>
+            OT
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.OT)"> {{element.OT}} </td>
+        </ng-container>
+        <ng-container matColumnDef="OT2">
+          <th mat-header-cell *matHeaderCellDef>
+            OT2
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.OT2)"> {{element.OT2}} </td>
+        </ng-container>
+        <ng-container matColumnDef="OT3">
+          <th mat-header-cell *matHeaderCellDef>
+            OT3
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.OT3)"> {{element.OT3}} </td>
+        </ng-container>
+        <ng-container matColumnDef="OT4">
+          <th mat-header-cell *matHeaderCellDef>
+            OT4
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.OT4)"> {{element.OT4}} </td>
+        </ng-container>
+        <ng-container matColumnDef="OT5">
+          <th mat-header-cell *matHeaderCellDef>
+            OT5
+          </th>
+          <td mat-cell *matCellDef="let element" [class]="cssTime(element.OT5)"> {{element.OT5}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns ;sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+
+    </div>
+  </div>
+</div>
