@@ -65,7 +65,7 @@ export class AppComponent {
   }
   // todo show user login name
   displayName() {
-    let userLogin: any = localStorage.getItem('RGAS_user')
+    let userLogin: any = localStorage.getItem('WH_GA_user')
     userLogin = userLogin ? JSON.parse(userLogin) : null
     if (userLogin) {
       let firstName = userLogin.firstName ? userLogin.firstName : ''

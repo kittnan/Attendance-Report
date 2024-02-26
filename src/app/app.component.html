@@ -2,7 +2,7 @@
   <mat-toolbar color="primary" class="example-toolbar">
     <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
     <!-- <h1 class="example-app-name">{{title}}</h1> -->
-    <img src="../assets/img/logo444.png" style="width: 350px; height: 60px;">
+    <img src="./assets/img/logo-final.png" style="width: 304px; height: 56px;">
     <div fxFlex="auto"></div>
     <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="20">
       <!-- <div class="flex justify-around items-center me-4 gap-1">
@@ -11,7 +11,7 @@
           <mat-icon *ngIf="!theme" class="mat-18">light_mode</mat-icon>
         </mat-slide-toggle>
       </div> -->
-      <button mat-icon-button>
+      <!-- <button mat-icon-button>
         <div class="flex justify-around items-center gap-1">
           <mat-icon class="mat-18">
             contact_mail
@@ -26,7 +26,7 @@
         <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="5">
           <mat-icon class="mat-18">logout</mat-icon>
         </div>
-      </button>
+      </button> -->
     </div>
   </mat-toolbar>
 
@@ -62,6 +62,11 @@
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
+  <footer>
+    <p>
+      Services Tel: 1800, 1802 About: IT-SD, Kyocera Thailand © 2024
+    </p>
+  </footer>
 </div>
 
 <router-outlet *ngIf="!login"></router-outlet>

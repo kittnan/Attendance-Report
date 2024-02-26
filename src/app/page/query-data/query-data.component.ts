@@ -25,7 +25,7 @@ export class QueryDataComponent implements OnInit {
   filterOption: string[] = ['department code', 'employee code']
   filterSelected: any = 'department code'
   departmentOption: any = []
-  departmentCtrl = new FormControl([])
+  // departmentCtrl = new FormControl([])
   departmentSelected: any = []
 
   start: any
@@ -64,16 +64,14 @@ export class QueryDataComponent implements OnInit {
   }
 
 
-  valueChange(e: any) {
-    this.departmentSelected.push(e)
-  }
+  // valueChange(e: any) {
+  //   this.departmentSelected.push(e)
+  // }
   onSelectMode2(e: MatRadioChange) {
     this.radioSelected = e
   }
   onSelectMode(mode: string, e: any) {
     let checked = e.checked
-    console.log(checked);
-    console.log("🚀 ~ mode:", mode)
 
     // if (!this.summary && !this.detail) {
     //   if (mode == 'summary') {
@@ -106,7 +104,7 @@ export class QueryDataComponent implements OnInit {
       this.userSelect = 'all'
       this.displayedColumns = []
       let params: HttpParams = new HttpParams()
-      params = params.set('department', JSON.stringify(this.departmentCtrl.value))
+      params = params.set('department', JSON.stringify(this.departmentSelected))
       params = params.set('start', moment(this.start).format('YYYY-MM-DD'))
       params = params.set('end', moment(this.end).format('YYYY-MM-DD'))
       params = params.set('sort', 1)
@@ -186,11 +184,22 @@ export class QueryDataComponent implements OnInit {
   // todo onChangeFilter
   onChangeFilter() {
     if (this.filterSelected == 'employee code') {
-      this.departmentCtrl.setValue([])
+      this.departmentSelected = []
     }
     if (this.filterSelected == 'department code') {
       this.employeeCodeSelected = null
     }
+  }
+
+  // todo validateSubmitButton
+  validateSubmitButton() {
+    if (this.filterSelected == 'employee code') {
+      if (this.employeeCodeSelected && this.start && this.end) return false
+    }
+    if (this.filterSelected == 'department code') {
+      if (this.departmentSelected && this.departmentSelected.length > 0 && this.start && this.end) return false
+    }
+    return true
   }
 
 }

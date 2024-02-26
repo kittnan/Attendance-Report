@@ -13,7 +13,7 @@
 
       <mat-form-field *ngIf="filterSelected=='department code' " appearance="outline" floatLabel="always">
         <mat-label>Department Code</mat-label>
-        <mat-select [formControl]="departmentCtrl" multiple>
+        <mat-select [(ngModel)]="departmentSelected" multiple>
           <mat-option *ngFor="let item of departmentOption" [value]="item">{{item}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -39,7 +39,7 @@
       </mat-radio-group>
 
 
-      <button mat-raised-button class="bg-green-300" (click)="onSubmit()">
+      <button [disabled]="validateSubmitButton()" mat-raised-button class="bg-green-300" (click)="onSubmit()">
         <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="5">
           <span>Submit</span>
           <mat-icon class="mat-18">
@@ -57,7 +57,9 @@
           <mat-option *ngFor="let user of userOption" [value]="user.employeeCode">{{user.name}}</mat-option>
         </mat-select>
       </mat-form-field>
-
+      <span>
+        {{departmentSelected}}
+      </span>
     </div>
     <div *ngIf="dataSource &&  mode =='summary' && displayedColumns.length>0" [@fadeInOnEnter] fxFlex="100"
       fxLayout="row wrap" fxLayoutAlign="start start" class="table-container">
